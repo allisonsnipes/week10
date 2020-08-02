@@ -54,19 +54,19 @@ public class SmallIncomePovertyData {
 			} 
 		}
 		catch (IOException e) {
-			System.out.println("There is an error. Your entry of " + e.getMessage() + " is out of the index bounds.");
+			System.out.println("There is an error:" + e.getMessage() + " .");
 			e.printStackTrace();
 		}
 
 		return prevState;
 	}
-	
+
 	private static void dataForReport(String filename, int prevState, int[] state, int[] total_population, int[] children_population, int[] child_poverty_population) throws IOException {
 		File pd = new File("SmallAreaIncomePovertyEstData.txt");
 		BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pd)));
 		double percent;
 		String line;
-		
+
 		for( int i = 1; i <= prevState; i++) {
 			percent = 100 * (child_poverty_population[i] / children_population[i]);
 			line = String.format("%-3s %17s %17s %17s %24f %13.5", state[i], total_population[i], children_population[i], child_poverty_population[i], percent);
@@ -76,7 +76,29 @@ public class SmallIncomePovertyData {
 		System.out.println("You may find the report located at: " + pd.getAbsolutePath());
 	}
 
-
-
-
+	public static void main(String[] args) {
+		if(args.length != 3) {
+			System.out.println("You must have (3) runtime arguements for SmallIncomePovertyData: data source file path, the destination file path, and the number of records in the data file.");
+			System.exit(1);
+		}
+		
+		int[] state, total_population, children_population, child_poverty_population;
+		int prevState = 0;
+		
+		state = new int[100];
+		total_population = new int[100];
+		children_population = new int[100];
+		child_poverty_population = new int[100];
+		
+		try {
+			prevState = povertyData(args[0], state, total_population, children_population, child_poverty_population);
+			dataForReport(args[1], prevState, state, total_population, children_population, child_poverty_population);
+		} catch (FileNotFoundException e) {
+			System.out.println("There is an error:" + e.getMessage() + " .");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("There is an error:" + e.getMessage() + " .");
+			e.printStackTrace();
+		}	
 	}
+}
